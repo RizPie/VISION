@@ -1,9 +1,9 @@
+
 <!DOCTYPE html>
 <html>
 <head>
-  <title>VISION</title>
+  <title>VISION AI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <style>
     body {
       background: black;
@@ -19,15 +19,37 @@
       border: none;
       background: cyan;
       color: black;
+      cursor: pointer;
     }
   </style>
 </head>
 
 <body>
-  <h1>VISION</h1>
+  <h1>VISION AI</h1>
   <button onclick="startVision()">🎙 Speak</button>
 
 <script>
+async function getGroqResponse(prompt) {
+  // Replace with your actual Groq API endpoint and key
+  const API_KEY = "YOUR_GROQ_API_KEY";
+  const API_URL = "https://api.groq.com/v1/ai"; 
+
+  const response = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${API_KEY}`
+    },
+    body: JSON.stringify({
+      prompt: prompt,
+      max_output_tokens: 200
+    })
+  });
+
+  const data = await response.json();
+  return data.output_text || "I couldn't understand that.";
+}
+
 function speak(text) {
   const msg = new SpeechSynthesisUtterance(text);
   speechSynthesis.speak(msg);
@@ -44,19 +66,19 @@ function startVision() {
   recognition.lang = "en-US";
   recognition.start();
 
-  recognition.onresult = function(e) {
-    const command = e.results[0][0].transcript.toLowerCase();
-    speak("Opening YouTube");
+  recognition.onresult = async function(e) {
+    const command = e.results[0][0].transcript;
+    console.log("User said:", command);
+    speak("Processing your request...");
 
-    if (command.includes("youtube")) {
-      let query = command.replace("open", "").replace("youtube", "").replace("play", "");
-      if (!query) query = "trending music";
+    // Send command to Groq AI and get response
+    const aiResponse = await getGroqResponse(command);
+    speak(aiResponse);
+  };
 
-      window.open(
-        `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`,
-        "_blank"
-      );
-    }
+  recognition.onerror = function(e) {
+    console.error(e.error);
+    speak("Sorry, I couldn't hear you properly.");
   };
 }
 </script>
