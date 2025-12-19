@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>VISION</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      background: black;
+      color: cyan;
+      font-family: Arial;
+      text-align: center;
+      padding-top: 100px;
+    }
+    button {
+      font-size: 20px;
+      padding: 15px 30px;
+      border-radius: 50px;
+      border: none;
+      background: cyan;
+      color: black;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>VISION</h1>
+  <button onclick="startVision()">🎙 Speak</button>
+
+<script>
+function speak(text) {
+  const msg = new SpeechSynthesisUtterance(text);
+  speechSynthesis.speak(msg);
+}
+
+function startVision() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    alert("Speech Recognition not supported");
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = "en-US";
+  recognition.start();
+
+  recognition.onresult = function(e) {
+    const command = e.results[0][0].transcript.toLowerCase();
+    speak("Opening YouTube");
+
+    if (command.includes("youtube")) {
+      let query = command.replace("open", "").replace("youtube", "").replace("play", "");
+      if (!query) query = "trending music";
+
+      window.open(
+        `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`,
+        "_blank"
+      );
+    }
+  };
+}
+</script>
+</body>
+</html>
