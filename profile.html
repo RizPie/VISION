@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - AI Chat Platform</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Profile</h1>
+        <a href="/">Back to Chat</a>
+    </header>
+    <main>
+        <div id="profile-container">
+            <h2>Your Profile</h2>
+            <div id="user-details"></div>
+        </div>
+    </main>
+    <script>
+        fetch('/user')
+            .then(response => response.json())
+            .then(data => {
+                const details = document.getElementById('user-details');
+                if (data.name) {
+                    details.innerHTML = `
+                        <p><strong>Name:</strong> ${data.name}</p>
+                        <p><strong>Email:</strong> ${data.email}</p>
+                        <p><strong>Picture:</strong> <img src="${data.picture}" alt="Profile Picture" style="width: 100px; border-radius: 50%;"></p>
+                    `;
+                } else {
+                    details.innerHTML = '<p>Please log in.</p>';
+                }
+            })
+            .catch(error => console.log('Error:', error));
+    </script>
+</body>
+</html>
